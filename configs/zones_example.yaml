@@ -1,0 +1,16 @@
+# Zone definitions for retail store layout
+# Each zone is defined by a polygon (list of [x, y] vertices)
+# and an optional color for visualization [B, G, R]
+
+zones:
+  - name: entrance
+    polygon: [[100, 100], [300, 100], [300, 400], [100, 400]]
+    color: [0, 255, 0]
+
+  - name: checkout
+    polygon: [[500, 200], [700, 200], [700, 500], [500, 500]]
+    color: [255, 0, 0]
+
+  - name: electronics
+    polygon: [[350, 100], [600, 100], [600, 350], [350, 350]]
+    color: [0, 0, 255]

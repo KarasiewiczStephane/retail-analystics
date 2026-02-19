@@ -1,0 +1,38 @@
+# Retail Analytics Configuration
+
+detection:
+  model_path: "yolov8n.pt"
+  confidence_threshold: 0.5
+  person_class_id: 0
+
+tracking:
+  tracker_type: "bytetrack.yaml"
+  persist: true
+
+privacy:
+  face_model_path: "yolov8n-face.pt"
+  face_confidence_threshold: 0.3
+  blur_intensity: 51
+  enable_face_blurring: true
+
+database:
+  path: "data/detections.db"
+
+heatmap:
+  sigma: 20.0
+  colormap: "jet"
+  alpha: 0.6
+
+video:
+  supported_formats:
+    - ".mp4"
+    - ".avi"
+    - ".mov"
+
+logging:
+  level: "INFO"
+  file: "logs/retail_analytics.log"
+
+dashboard:
+  host: "0.0.0.0"
+  port: 8501
