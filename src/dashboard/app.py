@@ -7,6 +7,7 @@ distribution charts, and per-zone analysis with transition heatmaps.
 
 import tempfile
 
+import cv2
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -38,8 +39,14 @@ def main() -> None:
             "Upload Zones Config (YAML)", type=["yaml", "yml"]
         )
 
-    tab1, tab2, tab3 = st.tabs(
-        ["Upload & Process", "Traffic Overview", "Zone Analysis"]
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        [
+            "Upload & Process",
+            "Traffic Overview",
+            "Zone Analysis",
+            "Heatmap View",
+            "Video Playback",
+        ]
     )
 
     with tab1:
@@ -48,6 +55,10 @@ def main() -> None:
         _traffic_overview_tab()
     with tab3:
         _zone_analysis_tab()
+    with tab4:
+        _heatmap_view_tab()
+    with tab5:
+        _video_playback_tab()
 
 
 def _upload_and_process_tab(
@@ -157,6 +168,9 @@ def _run_processing(
             st.session_state.zone_names = zone_names
 
         results["hourly_distribution"] = traffic_counter.get_hourly_distribution()
+        results["video_path"] = video_path
+        results["width"] = metadata["width"]
+        results["height"] = metadata["height"]
         st.session_state.processed = True
         st.session_state.results = results
         st.success(
@@ -224,6 +238,84 @@ def _zone_analysis_tab() -> None:
             st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Upload a zones configuration file to see zone analysis")
+
+
+def _heatmap_view_tab() -> None:
+    """Render the heatmap visualization tab."""
+    st.header("Heatmap View")
+
+    if not st.session_state.processed:
+        st.info("Upload and process a video first")
+        return
+
+    results = st.session_state.results
+    trajectories = results.get("trajectories", {})
+
+    if not trajectories:
+        st.warning("No trajectories available for heatmap generation")
+        return
+
+    col1, col2 = st.columns(2)
+    with col1:
+        sigma = st.slider("Smoothing (sigma)", 5.0, 50.0, 20.0, 1.0)
+    with col2:
+        colormap_name = st.selectbox(
+            "Colormap",
+            ["JET", "HOT", "INFERNO", "TURBO"],
+        )
+
+    colormap_map = {
+        "JET": cv2.COLORMAP_JET,
+        "HOT": cv2.COLORMAP_HOT,
+        "INFERNO": cv2.COLORMAP_INFERNO,
+        "TURBO": cv2.COLORMAP_TURBO,
+    }
+    colormap = colormap_map[colormap_name]
+
+    width = results.get("width", 640)
+    height = results.get("height", 480)
+
+    from src.analytics.heatmap import HeatmapGenerator
+
+    generator = HeatmapGenerator.from_trajectories(
+        trajectories, width, height, sigma=sigma
+    )
+    colored = generator.generate_colored_heatmap(colormap=colormap)
+    rgb = cv2.cvtColor(colored, cv2.COLOR_BGR2RGB)
+    st.image(rgb, caption="Detection Heatmap", use_container_width=True)
+
+
+def _video_playback_tab() -> None:
+    """Render the annotated video playback tab."""
+    st.header("Video Playback")
+
+    if not st.session_state.processed:
+        st.info("Upload and process a video first")
+        return
+
+    results = st.session_state.results
+    video_path = results.get("video_path")
+
+    if video_path:
+        st.video(video_path)
+        st.caption(
+            f"Processed {results['total_frames']} frames | "
+            f"{results['unique_persons']} unique persons detected"
+        )
+    else:
+        st.info("No video path available for playback")
+
+    trajectories = results.get("trajectories", {})
+    if trajectories:
+        st.subheader("Trajectory Summary")
+        rows = [
+            {
+                "Person ID": tid,
+                "Points Tracked": len(pts),
+            }
+            for tid, pts in trajectories.items()
+        ]
+        st.dataframe(pd.DataFrame(rows), use_container_width=True)
 
 
 if __name__ == "__main__":
