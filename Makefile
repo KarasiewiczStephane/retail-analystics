@@ -1,4 +1,4 @@
-.PHONY: install test lint clean run docker
+.PHONY: install test lint clean run dashboard docker-build docker-run docker-cli docker-up docker-down
 
 install:
 	pip install -r requirements.txt
@@ -15,8 +15,23 @@ clean:
 	find . -type f -name "*.pyc" -delete
 
 run:
-	python -m src.main
+	python -m src.cli $(ARGS)
 
-docker:
-	docker build -t $(shell basename $(CURDIR)) .
-	docker run -p 8000:8000 $(shell basename $(CURDIR))
+dashboard:
+	streamlit run src/dashboard/app.py
+
+docker-build:
+	docker build -t retail-analytics .
+
+docker-run:
+	docker run -p 8501:8501 -v $(PWD)/data:/app/data retail-analytics
+
+docker-cli:
+	docker run -v $(PWD)/data:/app/data -v $(PWD)/input:/app/input -v $(PWD)/output:/app/output \
+		retail-analytics python -m src.cli $(ARGS)
+
+docker-up:
+	docker compose up -d
+
+docker-down:
+	docker compose down

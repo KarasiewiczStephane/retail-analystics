@@ -1,0 +1,19 @@
+services:
+  dashboard:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./configs:/app/configs
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  cli:
+    build: .
+    entrypoint: ["python", "-m", "src.cli"]
+    volumes:
+      - ./data:/app/data
+      - ./configs:/app/configs
+      - ./input:/app/input
+      - ./output:/app/output
