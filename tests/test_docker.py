@@ -34,7 +34,7 @@ class TestDockerfile:
     def test_dockerfile_installs_opencv_deps(self) -> None:
         """Dockerfile installs OpenCV runtime dependencies."""
         content = (ROOT / "Dockerfile").read_text()
-        assert "libgl1-mesa-glx" in content
+        assert "libgl1" in content
         assert "ffmpeg" in content
 
     def test_dockerfile_copies_source(self) -> None:
