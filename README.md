@@ -62,7 +62,7 @@ From the dashboard you can upload a video, optionally attach a zones YAML config
 
 No separate data preparation step is required -- videos are processed on upload.
 
-### 3. CLI usage (alternative)
+### 3. CLI Usage (alternative)
 
 ```bash
 # Process a video with zone analysis
