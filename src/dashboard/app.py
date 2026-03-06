@@ -5,6 +5,11 @@ progress feedback, traffic overview with visitor counts and hourly
 distribution charts, and per-zone analysis with transition heatmaps.
 """
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 import tempfile
 
 import cv2
