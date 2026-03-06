@@ -43,32 +43,40 @@ YOLOv8-based system for customer behavior analysis in retail environments. Track
 
 ## Quick Start
 
-### Installation
+### 1. Install dependencies
 
 ```bash
 git clone git@github.com:KarasiewiczStephane/retail-analystics.git
 cd retail-analystics
-pip install -r requirements.txt
+make install
 ```
 
-### Dashboard
+### 2. Launch the dashboard
 
 ```bash
-streamlit run src/dashboard/app.py
+make dashboard
 # Opens at http://localhost:8501
 ```
 
-### CLI Usage
+From the dashboard you can upload a video, optionally attach a zones YAML config, adjust detection confidence and blur settings in the sidebar, then click **Process Video**. Results appear across the Traffic Overview, Zone Analysis, Heatmap View, and Video Playback tabs.
+
+No separate data preparation step is required -- videos are processed on upload.
+
+### 3. CLI usage (alternative)
 
 ```bash
 # Process a video with zone analysis
+make run ARGS="process -i video.mp4 -c configs/zones_example.yaml -o output/"
+
+# Or call the module directly
 python -m src.cli process -i video.mp4 -c configs/zones_example.yaml -o output/
 
 # Generate a report from results
 python -m src.cli report -r output/results.json -o report.json
 
-# Create a heatmap
+# Create a heatmap (static PNG or animated GIF)
 python -m src.cli heatmap -i video.mp4 -o heatmap.png --sigma 15.0
+python -m src.cli heatmap -i video.mp4 -o heatmap.gif --animated
 ```
 
 ### Docker
@@ -86,7 +94,7 @@ make docker-cli ARGS="process -i /app/input/video.mp4 -o /app/output/"
 
 ### Zone Definition
 
-Create a YAML file defining store zones as polygons:
+Create a YAML file defining store zones as polygons (see `configs/zones_example.yaml`):
 
 ```yaml
 zones:
@@ -100,8 +108,6 @@ zones:
     polygon: [[350, 50], [600, 50], [600, 350], [350, 350]]
     color: [0, 0, 255]
 ```
-
-See `configs/zones_example.yaml` for a complete example.
 
 ### Application Config
 
