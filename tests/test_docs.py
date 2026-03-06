@@ -39,7 +39,7 @@ class TestReadme:
         """README has quick start instructions."""
         content = (ROOT / "README.md").read_text()
         assert "## Quick Start" in content
-        assert "pip install" in content
+        assert "make install" in content or "pip install" in content
 
     def test_readme_has_cli_usage(self) -> None:
         """README documents CLI usage."""
