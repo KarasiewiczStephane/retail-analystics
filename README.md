@@ -1,5 +1,7 @@
 # Retail Analytics
 
+> YOLOv8-based customer behavior analysis — foot traffic tracking, zone dwell time, heatmaps, and privacy-preserving face blurring for retail environments.
+
 [![CI](https://github.com/KarasiewiczStephane/retail-analystics/workflows/CI/badge.svg)](https://github.com/KarasiewiczStephane/retail-analystics/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -148,6 +150,11 @@ After processing a video with zone configuration:
 - **Zone Analysis**: Per-zone visitor count, entry count, average dwell time, transition heatmap
 - **Heatmap**: Gaussian-smoothed spatial density map of person trajectories
 - **Privacy**: Face-blurred output video
+
+
+## Author
+
+**Stéphane Karasiewicz** — [skarazdata.com](https://skarazdata.com) | [LinkedIn](https://www.linkedin.com/in/stephane-karasiewicz/)
 
 ## License
 
